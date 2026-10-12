@@ -82,10 +82,25 @@ DeckBuilder.config = {
     ["life"] = "https://steamusercontent-a.akamaihd.net/ugc/10947240453818268133/EB10A13D52EEA567560C2F6CE6D5DEF6BDFF16E6/",
   },
 
+  -- Per-section card name prefix. Key is matched (case-insensitive substring)
+  -- against the section heading; value is prepended to each card's code to
+  -- form its Nickname.
+  sectionNamePrefix = {
+    ["life"] = "ไม่นะ ",
+  },
+
+  -- Per-section card name suffix. Key is matched (case-insensitive substring)
+  -- against the section heading; value is appended to each card's code to
+  -- form its Nickname.
+  sectionNameSuffix = {
+    ["life"] = "!",
+  },
+
   -- Some sets live in a sub-folder on the CDN. Key = set prefix, value = path
   -- segment inserted before the filename.
   setPath = {
     SD09 = "123v1k1/",   -- https://cdn.bottcg.com/cards/123v1k1/SD09-019.png
+    RM01 = "0aslabe/",   -- https://cdn.bottcg.com/cards/0aslabe/RM01-023.png
   },
 
   -- Rarity suffixes that are part of the CDN filename and must NOT be stripped.
@@ -271,6 +286,22 @@ local function configForSection(baseCfg, title)
   return cfg
 end
 
+local function namePrefixForSection(baseCfg, title)
+  local prefix
+  for key, p in pairs(baseCfg.sectionNamePrefix or {}) do
+    if title:lower():find(key:lower(), 1, true) then prefix = p end
+  end
+  return prefix
+end
+
+local function nameSuffixForSection(baseCfg, title)
+  local suffix
+  for key, s in pairs(baseCfg.sectionNameSuffix or {}) do
+    if title:lower():find(key:lower(), 1, true) then suffix = s end
+  end
+  return suffix
+end
+
 function DeckBuilder.spawnDecklist(text, opts)
   opts = opts or {}
   local parsed = DeckBuilder.parseDecklist(text)
@@ -281,7 +312,16 @@ function DeckBuilder.spawnDecklist(text, opts)
   for i, section in ipairs(parsed.sections) do
     if #section.cards > 0 then
       local pos = { origin[1] + (i - 1) * gap, origin[2], origin[3] }
-      local obj = DeckBuilder.spawn(section.cards, {
+      local prefix = namePrefixForSection(baseCfg, section.title)
+      local suffix = nameSuffixForSection(baseCfg, section.title)
+      local cards = section.cards
+      if prefix or suffix then
+        cards = {}
+        for j, code in ipairs(section.cards) do
+          cards[j] = { code = code, name = (prefix or "") .. code .. (suffix or "") }
+        end
+      end
+      local obj = DeckBuilder.spawn(cards, {
         position = pos,
         scale    = opts.scale,
         name     = parsed.name .. " - " .. section.title,
