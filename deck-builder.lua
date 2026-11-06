@@ -101,6 +101,7 @@ DeckBuilder.config = {
   setPath = {
     SD09 = "123v1k1/",   -- https://cdn.bottcg.com/cards/123v1k1/SD09-019.png
     RM01 = "0aslabe/",   -- https://cdn.bottcg.com/cards/0aslabe/RM01-023.png
+    BT12 = "thankyoupnes/",   -- https://cdn.bottcg.com/cards/0aslabe/BT12-001.png
   },
 
   -- Rarity suffixes that are part of the CDN filename and must NOT be stripped.
