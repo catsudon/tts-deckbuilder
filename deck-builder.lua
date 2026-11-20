@@ -102,6 +102,8 @@ DeckBuilder.config = {
     SD09 = "123v1k1/",   -- https://cdn.bottcg.com/cards/123v1k1/SD09-019.png
     RM01 = "0aslabe/",   -- https://cdn.bottcg.com/cards/0aslabe/RM01-023.png
     BT12 = "thankyoupnes/",   -- https://cdn.bottcg.com/cards/0aslabe/BT12-001.png
+    B2SA = "thankyoupnes/",   -- https://cdn.bottcg.com/cards/0aslabe/BT12-001.png
+    CC03 = "234b2o/",   -- https://cdn.bottcg.com/cards/0aslabe/BT12-001.png
   },
 
   -- Rarity suffixes that are part of the CDN filename and must NOT be stripped.
@@ -130,8 +132,8 @@ end
 function DeckBuilder.faceURL(code)
   local cfg  = DeckBuilder.config
   local slug = DeckBuilder.cardSlug(code)
-  local set  = tostring(code):match("^([A-Za-z]+%d*)")   -- "SD09" from "SD09-019-C"
-  local sub  = (set and cfg.setPath[set]) or ""
+  local set  = tostring(code):match("^([^%-]+)")   -- "SD09" from "SD09-019-C", "B2SA" from "B2SA-001"
+  local sub  = (set and cfg.setPath[set:upper()]) or ""
   return cfg.faceBaseURL .. sub .. slug .. ".png"
 end
 
